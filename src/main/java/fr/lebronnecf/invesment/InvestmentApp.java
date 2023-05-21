@@ -1,0 +1,12 @@
+package fr.lebronnecf.invesment;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class InvestmentApp {
+
+	public static void main(String[] args) {
+		SpringApplication.run(InvestmentApp.class, args);
+	}
+}
