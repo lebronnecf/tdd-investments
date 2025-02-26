@@ -1,16 +1,14 @@
 package fr.lebronnecf.invesment.controllers;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.net.URI;
 
 import fr.lebronnecf.invesment.repositories.InvestmentRepository;
 import fr.lebronnecf.invesment.models.InvestmentApplication;
-import fr.lebronnecf.invesment.utils.MailUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -44,14 +42,15 @@ public class InvestmentCalculatorController {
 		applicableRate = applicableRate.add(new BigDecimal("1"));
 		
 		BigDecimal totalRepayable = new BigDecimal(investment.getSumInvested() * Double.parseDouble(applicableRate.toString()) * investment.getTermInMonths() / 12);
-		BigDecimal repayment = totalRepayable.divide(new BigDecimal("" + investment.getTermInMonths()),RoundingMode.UP);
+		BigDecimal repayment = totalRepayable.divide(new BigDecimal("" + investment.getTermInMonths()));
 		investment.setPayback(repayment);
 		
 		SimpleMailMessage message = new SimpleMailMessage();
 		message.setTo(investment.getName());
 		message.setSubject("Thank you for your investment application.");
 		message.setText("We're currently processing your request, and will send you a further email when we have a decision.");
-		MailUtils.send(message);
+		JavaMailSender mailSender = new JavaMailSenderImpl();
+		mailSender.send(message);
 		
 		return new ModelAndView("requestAccepted");
 	} 
